@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">IMD Market</string>
+    <string name="title_activity_auth_login">Entrar</string>
+    <string name="title_activity_auth_forgot">Recuperar Acesso</string>
+
+    <string name="title_activity_products_create">Cadastrar Produto</string>
+    <string name="title_activity_products_delete">Deletar Produtos</string>
+    <string name="title_activity_products_edit">Alterar Produto</string>
+    <string name="title_activity_products_index">Listar Produtos</string>
+
+    <string name="back_content_description">Voltar</string>
+    <string name="login_content_description">Entrar</string>
+    <string name="forgot_content_description">Recuperar acesso</string>
+    <string name="add_content_description">Cadastrar</string>
+    <string name="edit_content_description">Alterar</string>
+    <string name="delete_content_description">Deletar</string>
+</resources>

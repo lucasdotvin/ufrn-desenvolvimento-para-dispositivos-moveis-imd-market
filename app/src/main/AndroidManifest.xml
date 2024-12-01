@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.IMDMarket"
+        tools:targetApi="31">
+        <activity
+            android:name=".products.CreateActivity"
+            android:exported="false"
+            android:label="@string/title_activity_products_create"
+            android:theme="@style/Theme.IMDMarket" />
+        <activity
+            android:name=".products.DeleteActivity"
+            android:exported="false"
+            android:label="@string/title_activity_products_delete"
+            android:theme="@style/Theme.IMDMarket" />
+        <activity
+            android:name=".products.EditActivity"
+            android:exported="false"
+            android:label="@string/title_activity_products_edit"
+            android:theme="@style/Theme.IMDMarket" />
+        <activity
+            android:name=".products.IndexActivity"
+            android:exported="false"
+            android:label="@string/title_activity_products_index"
+            android:theme="@style/Theme.IMDMarket" />
+        <activity
+            android:name=".auth.LoginActivity"
+            android:exported="true"
+            android:label="@string/title_activity_auth_login"
+            android:theme="@style/Theme.IMDMarket">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".auth.ForgotActivity"
+            android:exported="false"
+            android:label="@string/title_activity_auth_forgot"
+            android:theme="@style/Theme.IMDMarket" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.IMDMarket" />
+    </application>
+
+</manifest>
