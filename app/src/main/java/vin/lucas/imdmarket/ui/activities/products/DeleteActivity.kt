@@ -1,4 +1,4 @@
-package vin.lucas.imdmarket.products
+package vin.lucas.imdmarket.ui.activities.products
 
 import android.os.Bundle
 import android.widget.Toast
@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,7 +30,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,10 +38,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import vin.lucas.imdmarket.IMDMarketApplication
 import vin.lucas.imdmarket.R
+import vin.lucas.imdmarket.contracts.ProductService
 import vin.lucas.imdmarket.ui.theme.IMDMarketTheme
 
-class CreateActivity : ComponentActivity() {
+class DeleteActivity : ComponentActivity() {
+    private val productService by lazy {
+        (this.application as IMDMarketApplication).serviceContainer.productService
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +70,7 @@ class CreateActivity : ComponentActivity() {
                                 }
                             },
                             title = {
-                                Text("Cadastrar Produto")
+                                Text("Deletar Produtos")
                             },
                         )
                     },
@@ -73,7 +79,8 @@ class CreateActivity : ComponentActivity() {
                             modifier = Modifier.padding(paddingValues),
                         )
                         {
-                            Create(
+                            Delete(
+                                productService,
                                 this,
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -88,14 +95,12 @@ class CreateActivity : ComponentActivity() {
 }
 
 @Composable
-fun Create(
+fun Delete(
+    productService: ProductService,
     context: ComponentActivity,
     modifier: Modifier = Modifier,
 ) {
-    var code by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var stock by remember { mutableStateOf("") }
+    var code by remember { mutableIntStateOf(0) }
 
     Column(
         modifier = modifier,
@@ -104,36 +109,11 @@ fun Create(
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = code,
-            onValueChange = { code = it },
+            value = code.toString(),
+            onValueChange = {
+                code = it.toIntOrNull() ?: 0
+            },
             label = { Text("Código") },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Nome") },
-            singleLine = true,
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Descrição") },
-            singleLine = false,
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = stock,
-            onValueChange = { stock = it },
-            label = { Text("Estoque") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
@@ -141,10 +121,7 @@ fun Create(
         TextButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                code = ""
-                name = ""
-                description = ""
-                stock = ""
+                code = 0
             }
         ) {
             Icon(
@@ -162,18 +139,25 @@ fun Create(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                Toast.makeText(context, "Produto cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
+                val removed = productService.removeByCode(code)
+
+                if (!removed) {
+                    Toast.makeText(context, "Produto não encontrado!", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+
+                Toast.makeText(context, "Produto deletado com sucesso!", Toast.LENGTH_SHORT).show()
                 context.finish()
             }
         ) {
             Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = stringResource(id = R.string.add_content_description),
+                imageVector = Icons.Filled.Delete,
+                contentDescription = stringResource(id = R.string.delete_content_description),
                 modifier = Modifier
                     .padding(end = 4.dp)
                     .size(20.dp),
             )
-            Text(text = "Cadastrar")
+            Text(text = "Deletar")
         }
     }
 }

@@ -1,18 +1,13 @@
-package vin.lucas.imdmarket.products
+package vin.lucas.imdmarket.ui.activities.products
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,21 +17,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import vin.lucas.imdmarket.IMDMarketApplication
 import vin.lucas.imdmarket.R
+import vin.lucas.imdmarket.contracts.ProductService
+import vin.lucas.imdmarket.ui.partials.ProductForm
 import vin.lucas.imdmarket.ui.theme.IMDMarketTheme
 
-class IndexActivity : ComponentActivity() {
+class CreateActivity : ComponentActivity() {
+    private val productService by lazy {
+        (this.application as IMDMarketApplication).serviceContainer.productService
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +55,7 @@ class IndexActivity : ComponentActivity() {
                                 }
                             },
                             title = {
-                                Text("Listar Produtos")
+                                Text("Cadastrar Produto")
                             },
                         )
                     },
@@ -68,7 +64,8 @@ class IndexActivity : ComponentActivity() {
                             modifier = Modifier.padding(paddingValues),
                         )
                         {
-                            Index(
+                            Create(
+                                productService,
                                 this,
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -83,55 +80,37 @@ class IndexActivity : ComponentActivity() {
 }
 
 @Composable
-fun Index(
+fun Create(
+    productService: ProductService,
     context: ComponentActivity,
     modifier: Modifier = Modifier,
 ) {
-    val dashedStroke = Stroke(width = 2f,
-        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-    )
-
-    val shapeColor = MaterialTheme.colorScheme.inverseSurface
-
-    Column(
+    ProductForm(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .drawBehind {
-                    drawRoundRect(
-                        color = shapeColor,
-                        style = dashedStroke,
-                        cornerRadius = CornerRadius(16f)
-                    )
-                },
-        ) {
-            Text(
-                "Futura lista de produtos...",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.inverseSurface,
-            )
+        product = null,
+        submitButtonIcon = Icons.Filled.Add,
+        submitButtonIconDescription = stringResource(id = R.string.add_content_description),
+        submitButtonLabel = stringResource(id = R.string.add_content_description),
+        onSubmit = { product ->
+            try {
+                productService.store(product);
+            } catch (e: IllegalArgumentException) {
+                Toast.makeText(
+                    context,
+                    e.message,
+                    Toast.LENGTH_SHORT,
+                ).show()
+
+                return@ProductForm
+            }
+
+            Toast.makeText(
+                context,
+                "Produto cadastrado com sucesso!",
+                Toast.LENGTH_SHORT,
+            ).show()
+
+            context.finish()
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        TextButton(
-            onClick = { context.finish() }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = stringResource(id = R.string.back_content_description),
-                modifier = Modifier
-                    .padding(end = 4.dp)
-                    .size(16.dp),
-            )
-            Text(
-                text = "Voltar",
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-    }
+    )
 }

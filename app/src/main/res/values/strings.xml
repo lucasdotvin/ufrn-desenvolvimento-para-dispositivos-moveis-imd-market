@@ -14,4 +14,9 @@
     <string name="add_content_description">Cadastrar</string>
     <string name="edit_content_description">Alterar</string>
     <string name="delete_content_description">Deletar</string>
+    <string name="auth_shared_preferences_key">auth</string>
+    <string name="auth_shared_preferences_login_key">login</string>
+    <string name="auth_shared_preferences_password_key">password</string>
+    <string name="empty_content_description">Vazio</string>
+    <string name="sqlite_database_name">imdmarket.sqlite</string>
 </resources>

@@ -1,7 +1,8 @@
-package vin.lucas.imdmarket
+package vin.lucas.imdmarket.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,16 +33,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import vin.lucas.imdmarket.products.CreateActivity
-import vin.lucas.imdmarket.products.DeleteActivity
-import vin.lucas.imdmarket.products.EditActivity
-import vin.lucas.imdmarket.products.IndexActivity
+import vin.lucas.imdmarket.IMDMarketApplication
+import vin.lucas.imdmarket.R
+import vin.lucas.imdmarket.ui.activities.auth.LoginActivity
+import vin.lucas.imdmarket.ui.activities.products.CreateActivity
+import vin.lucas.imdmarket.ui.activities.products.DeleteActivity
+import vin.lucas.imdmarket.ui.activities.products.IndexActivity
 import vin.lucas.imdmarket.ui.theme.IMDMarketTheme
 
 class MainActivity : ComponentActivity() {
+    private fun isAuthenticated(): Boolean {
+        val sharedPref = getSharedPreferences(
+            getString(R.string.auth_shared_preferences_key),
+            MODE_PRIVATE
+        )
+
+        return sharedPref.contains(getString(R.string.auth_shared_preferences_login_key))
+    }
+
+    override fun onStop() {
+        (this.application as IMDMarketApplication).serviceContainer.terminate()
+
+        super.onStop()
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (!this.isAuthenticated()) {
+            Toast.makeText(this, "Você precisa estar logado", Toast.LENGTH_SHORT).show()
+
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
 
         setContent {
             IMDMarketTheme {
@@ -104,13 +129,6 @@ fun Home(
             context = context,
             icon = Icons.Default.List,
             label = "Listar Produtos",
-            modifier = Modifier.width(180.dp),
-        )
-        ProductActionButton(
-            action = EditActivity::class.java,
-            context = context,
-            icon = Icons.Default.Edit,
-            label = "Alterar Produto",
             modifier = Modifier.width(180.dp),
         )
         ProductActionButton(

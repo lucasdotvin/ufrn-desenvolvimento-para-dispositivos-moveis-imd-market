@@ -1,6 +1,5 @@
-package vin.lucas.imdmarket.auth
+package vin.lucas.imdmarket.ui.activities.auth
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,20 +10,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,15 +32,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import vin.lucas.imdmarket.MainActivity
 import vin.lucas.imdmarket.R
 import vin.lucas.imdmarket.ui.theme.IMDMarketTheme
 
-class LoginActivity : ComponentActivity() {
+class ForgotActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +49,16 @@ class LoginActivity : ComponentActivity() {
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             ),
+                            navigationIcon = {
+                                IconButton(onClick = { finish() }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.ArrowBack,
+                                        contentDescription = stringResource(R.string.back_content_description)
+                                    )
+                                }
+                            },
                             title = {
-                                Text("Entrar")
+                                Text("Recuperar Acesso")
                             },
                         )
                     },
@@ -65,8 +67,7 @@ class LoginActivity : ComponentActivity() {
                             modifier = Modifier.padding(paddingValues),
                         )
                         {
-                            LoginForm(
-                                this,
+                            ForgotForm(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(24.dp),
@@ -80,12 +81,8 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun LoginForm(
-    context: ComponentActivity,
-    modifier: Modifier = Modifier
-) {
-    var login by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun ForgotForm(modifier: Modifier = Modifier) {
+    var document by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier,
@@ -94,54 +91,23 @@ fun LoginForm(
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = login,
-            onValueChange = { login = it },
-            label = { Text("Login") },
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = password,
-            onValueChange = { password = it },
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            label = { Text("Senha") },
+            value = document,
+            onValueChange = { document = it },
+            label = { Text("CPF") },
         )
         Spacer(modifier = Modifier.padding(8.dp))
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                context.startActivity(Intent(context, MainActivity::class.java))
-            }
+            onClick = {},
         ) {
             Icon(
-                imageVector = Icons.Filled.ExitToApp,
-                contentDescription = stringResource(id = R.string.login_content_description),
+                imageVector = Icons.Filled.ArrowForward,
+                contentDescription = stringResource(id = R.string.forgot_content_description),
                 modifier = Modifier
                     .padding(end = 4.dp)
                     .size(20.dp),
             )
-            Text(text = "Entrar")
-        }
-        Spacer(modifier = Modifier.padding(8.dp))
-        TextButton(
-            onClick = {
-                context.startActivity(Intent(context, ForgotActivity::class.java))
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Warning,
-                contentDescription = stringResource(id = R.string.forgot_content_description),
-                modifier = Modifier
-                    .padding(end = 4.dp)
-                    .size(16.dp),
-            )
-            Text(
-                text = "Esqueceu sua senha ou login?",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline,
-            )
+            Text(text = "Recuperar")
         }
     }
 }

@@ -1,101 +1,48 @@
-package vin.lucas.imdmarket.products
+package vin.lucas.imdmarket.ui.partials
 
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.compose.material3.Button
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import vin.lucas.imdmarket.R
-import vin.lucas.imdmarket.ui.theme.IMDMarketTheme
-
-class EditActivity : ComponentActivity() {
-    @OptIn(ExperimentalMaterial3Api::class)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            IMDMarketTheme {
-                Scaffold(
-                    topBar = {
-                        CenterAlignedTopAppBar(
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            ),
-                            navigationIcon = {
-                                IconButton(onClick = { finish() }) {
-                                    Icon(
-                                        imageVector = Icons.Filled.ArrowBack,
-                                        contentDescription = stringResource(R.string.back_content_description)
-                                    )
-                                }
-                            },
-                            title = {
-                                Text("Alterar Produto")
-                            },
-                        )
-                    },
-                    content = { paddingValues ->
-                        Surface(
-                            modifier = Modifier.padding(paddingValues),
-                        )
-                        {
-                            Edit(
-                                this,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(24.dp),
-                            )
-                        }
-                    }
-                )
-            }
-        }
-    }
-}
+import vin.lucas.imdmarket.entities.Product
 
 @Composable
-fun Edit(
-    context: ComponentActivity,
+fun ProductForm(
+    product: Product?,
     modifier: Modifier = Modifier,
+    onSubmit: (Product) -> Unit,
+    submitButtonIcon: ImageVector,
+    submitButtonIconDescription: String,
+    submitButtonLabel: String,
 ) {
-    var code by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var stock by remember { mutableStateOf("") }
+    var code by remember { mutableIntStateOf(product?.code ?: 0) }
+    var name by remember { mutableStateOf(product?.name ?: "") }
+    var description by remember { mutableStateOf(product?.description ?: "") }
+    var stock by remember { mutableIntStateOf(product?.stock ?: 0) }
 
     Column(
         modifier = modifier,
@@ -104,8 +51,10 @@ fun Edit(
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = code,
-            onValueChange = { code = it },
+            value = code.toString(),
+            onValueChange = {
+                code = it.toIntOrNull() ?: 0
+            },
             label = { Text("Código") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -131,8 +80,10 @@ fun Edit(
         Spacer(modifier = Modifier.padding(4.dp))
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = stock,
-            onValueChange = { stock = it },
+            value = stock.toString(),
+            onValueChange = {
+                stock = it.toIntOrNull() ?: 0
+            },
             label = { Text("Estoque") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -141,10 +92,10 @@ fun Edit(
         TextButton(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                code = ""
+                code = 0
                 name = ""
                 description = ""
-                stock = ""
+                stock = 0
             }
         ) {
             Icon(
@@ -162,18 +113,28 @@ fun Edit(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                Toast.makeText(context, "Produto alterado com sucesso!", Toast.LENGTH_SHORT).show()
-                context.finish()
+                onSubmit(
+                    Product(
+                        id = product?.id,
+                        code = code.toInt(),
+                        name = name,
+                        description = description,
+                        stock = stock.toInt(),
+                    )
+                )
             }
         ) {
             Icon(
-                imageVector = Icons.Filled.Edit,
-                contentDescription = stringResource(id = R.string.edit_content_description),
+                imageVector = submitButtonIcon,
+                contentDescription = submitButtonIconDescription,
                 modifier = Modifier
                     .padding(end = 4.dp)
-                    .size(20.dp),
+                    .size(16.dp),
             )
-            Text(text = "Alterar")
+            Text(
+                text = submitButtonLabel,
+                style = MaterialTheme.typography.bodySmall,
+            )
         }
     }
 }
